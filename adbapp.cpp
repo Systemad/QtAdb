@@ -7,10 +7,8 @@ AdbApp::AdbApp(QWidget *parent)
     , ui(new Ui::AdbApp)
 {
     ui->setupUi(this);
-
-    //ui->adbOutput->setText("Helli");
-    connect(ui->devicesButton, SIGNAL(clicked()), this, SLOT(clearField()));
-
+    connect(ui->devicesButton, SIGNAL(clicked()), this, SLOT(adbDevices()));
+    connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(clearField()));
 }
 
 AdbApp::~AdbApp()
@@ -18,17 +16,27 @@ AdbApp::~AdbApp()
     delete ui;
 }
 
-void AdbApp::clearField(){
-
-    QString exec = "adb";
-    QStringList params;
-    params << "devices";
-    adb.start(exec, params);
-    adb.waitForFinished();
-    QString output(adb.readAllStandardOutput());
-    ui->adbOutput->setText(output);
-
-    adb.kill();
-    //ui->adbOutput->clear();
+void AdbApp::clearField()
+{
+    ui->adbOutput->clear();
 }
 
+void AdbApp::adbDevices()
+{
+    QStringList arguments;
+    arguments << "devices";
+    executeCommand(arguments);
+}
+
+void AdbApp::executeCommand(const QStringList &args)
+{
+    m_output = "";
+    QString exec = "adb";
+    QStringList arguments;
+    arguments << args;
+
+    m_adb.start(exec, arguments);
+    m_adb.waitForFinished();
+    m_output = m_adb.readAllStandardOutput();
+    ui->adbOutput->setText(m_output);
+}

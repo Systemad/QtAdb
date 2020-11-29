@@ -20,10 +20,12 @@ public:
 
 
 private slots:
+    void adbDevices();
+    void executeCommand(const QStringList &args);
     void clearField();
 
 private:
-    QPushButton m_clearFieldButton;
-    QProcess adb;
+    QProcess m_adb;
+    QString m_output;
 };
 #endif // ADBAPP_H
